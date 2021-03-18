@@ -70,7 +70,11 @@ addRoles = () => {
       {
         type: 'list',
         name: 'selDept',
-        message: 'choose a department to receive a new role?'
+        message: 'choose a department to receive a new role?',
+        choices: departments.map( data => ({
+          name: data.name,
+          value: data.id
+        }))
       }, {
         type: 'input',
         name: 'name',
@@ -87,6 +91,7 @@ addRoles = () => {
           salary: res.salary,
           department_id: res.selDept
         }
+        console.log(newRole)
         db.query('INSERT INTO roles SET ?', newRole, err => {
           if (err) { console.log(err) }
           console.log('Role Added!')
@@ -95,6 +100,7 @@ addRoles = () => {
       })
       .catch(err => console.log(err))
   })
+}
 
 addEmployees = () => {
 
@@ -151,6 +157,8 @@ addEmployees = () => {
             })
             .catch(err => console.log(err))
         })
+      })
+}
 
 viewDepartments = () => {
             db.query('SELECT name FROM departments', (err, departments) => {
@@ -198,7 +206,7 @@ updateEmployeeRoles = () => {
                     value: data.id
                   }))
                 }, {
-                  type: 'input',
+                  type: 'list',
                   name: 'selRole',
                   message: 'What is the new employees new role?',
                   choices: roles.map(data => ({
@@ -207,7 +215,7 @@ updateEmployeeRoles = () => {
                   }))
                 }
               ])
-                .then(({ name, title }) => {
+                .then(res => {
                   db.query('UPDATE employee SET role_id WHERE id = ?', [res.selRole, res.selEmployee], err => {
                     if (err) { console.log(err) }
                       console.log('Role has been updated!')
