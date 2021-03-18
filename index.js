@@ -149,7 +149,7 @@ addEmployees = () => {
                 role_id: res.role,
                 manager_id: res.manager || null
               }
-              db.query('INSERT INTO employee SET ?', newEmployee, err => {
+              db.query('INSERT INTO employees SET ?', newEmployee, err => {
                 if (err) { console.log(err) }
                 console.log('Employee Added!')
                 start()
@@ -179,15 +179,14 @@ viewRoles = () => {
           }
 
 viewEmployees = () => {
-            db.query(`SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, roles.title, roles.salary,
-  departments.name AS 'department', CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-  FROM employees
-  LEFT JOIN roles ON employees.role_id = roles.id
-  LEFT JOIN departments ON roles.department_id = departments.id
-  LEFT JOIN employees manager ON manager.id = employees.manager_id;`, (err, employees) => {
+  db.query(`SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.name AS 'department', CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+FROM employees
+LEFT JOIN roles ON employees.role_id = roles.id
+LEFT JOIN departments ON roles.department_id = departments.id
+LEFT JOIN employees manager ON manager.id = employees.manager_id;`, (err, company) => {
             if (err) { console.log(err) }
 
-            console.table(employees)
+            console.table(company)
             start()
           })
       }
@@ -201,7 +200,7 @@ updateEmployeeRoles = () => {
                   type: 'list',
                   name: 'selEmployee',
                   message: 'Select an employee to update their role:',
-                  choices: employee.map(data => ({
+                  choices: employees.map(data => ({
                     name: data.name,
                     value: data.id
                   }))
@@ -209,14 +208,14 @@ updateEmployeeRoles = () => {
                   type: 'list',
                   name: 'selRole',
                   message: 'What is the new employees new role?',
-                  choices: roles.map(data => ({
+                  choices: employeeRoles.map(data => ({
                     name: data.title,
                     value: data.id
                   }))
                 }
               ])
                 .then(res => {
-                  db.query('UPDATE employee SET role_id WHERE id = ?', [res.selRole, res.selEmployee], err => {
+                  db.query('UPDATE employees SET role_id = ?  WHERE id = ?', [res.selRole, res.selEmployee], err => {
                     if (err) { console.log(err) }
                       console.log('Role has been updated!')
                       start()
