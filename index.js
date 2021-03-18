@@ -51,9 +51,9 @@ addDepartments = () => {
     }
   ])
     .then(department => {
-      db.query('INSERT INTO departments SET?' department, err => {
+      db.query('INSERT INTO departments SET ?' department, err => {
         if (err) { console.log(err) }
-        console.log('Department Added!')
+        console.log ('Department Added!')
         start()
       })
     })
