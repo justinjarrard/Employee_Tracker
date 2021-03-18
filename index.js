@@ -51,7 +51,7 @@ addDepartments = () => {
     }
   ])
     .then(department => {
-      db.query('INSERT INTO departments SET ?' department, err => {
+      db.query('INSERT INTO departments SET ?', department, err => {
         if (err) { console.log(err) }
         console.log('Department Added!')
         start()
@@ -94,7 +94,7 @@ addRoles = () => {
         })
       })
       .catch(err => console.log(err))
-  }
+  })
 
 addEmployees = () => {
 
@@ -129,7 +129,7 @@ addEmployees = () => {
               type: 'list',
               name: 'manager',
               message: `Choose the employee's manager:`,
-              when function(answers) { return answers.bool },
+              when: function(answers) { return answers.bool },
               choices: employees.map(data => ({
                 name: data.name,
                 value: data.employeeID
@@ -150,7 +150,7 @@ addEmployees = () => {
               })
             })
             .catch(err => console.log(err))
-        }
+        })
 
 viewDepartments = () => {
             db.query('SELECT name FROM departments', (err, departments) => {
@@ -171,12 +171,12 @@ viewRoles = () => {
           }
 
 viewEmployees = () => {
-            db.query('SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, roles.title, roles.salary,
+            db.query(`SELECT CONCAT(employees.first_name, ' ', employees.last_name) AS name, roles.title, roles.salary,
   departments.name AS 'department', CONCAT(manager.first_name, ' ', manager.last_name) AS manager
   FROM employees
   LEFT JOIN roles ON employees.role_id = roles.id
   LEFT JOIN departments ON roles.department_id = departments.id
-  LEFT JOIN employees manager ON manager.id = employees.manager_id; ', (err, employees) => {
+  LEFT JOIN employees manager ON manager.id = employees.manager_id;`, (err, employees) => {
             if (err) { console.log(err) }
 
             console.table(employees)
@@ -214,7 +214,7 @@ updateEmployeeRoles = () => {
                       start()
                     })
                 })
-                catch(err => console.log(err))
+                .catch(err => console.log(err))
               })
             })
           }
